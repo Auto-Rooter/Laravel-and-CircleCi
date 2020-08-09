@@ -9,21 +9,22 @@ use App\User;
 
 class AuthController extends Controller
 {
-    public function signup(Request $request){
+    public function signup(Request $request)
+    {
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed'
-        ]);
+            'password' => 'required|confirmed'
+        ]); 
 
-        $user = new USer([
+        $user_data = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password)
-        ]);
+        ];
 
-        $user->save();
-
+        $user = User::create($user_data);
+        
         return response()->json([
             'message' => 'User Registered Successfully...'
         ], 201);
@@ -57,7 +58,7 @@ class AuthController extends Controller
         return response()->json(['access_token' => $tokenResult->accessToken,
                                 'token_type' => 'Bearer',
                                 'expires_at' => Carbon::parse(
-                                    $tokenResult->token->expires_at)->toDateTimeString()
+                                $tokenResult->token->expires_at)->toDateTimeString()
                                 ]);
     }
 
